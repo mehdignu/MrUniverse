@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class Boundary
@@ -14,42 +15,63 @@ public class PlayerController : MonoBehaviour
 	public float speed;
 	public float tilt;
 	public Boundary boundary;
-
+	private float myTime = 0.0F;
 	public GameObject shot;
 	public Transform shotSpawn; 
 	public float fireRate;
-
+	private Rigidbody rb;
 	private float nextFire; 
+	private AudioSource audioSource;
+
+	void Start()
+	{
+		audioSource = GetComponent<AudioSource>();
+		rb = GetComponent<Rigidbody>();
+	}
 
 	void Update () 
 	{
+
 
 		//fire1 is preset value in the game manager
 		if (Input.GetButton("Fire1") && Time.time > nextFire) 
 		{
 
 			//we want to instantiate the bolt Object
-			shot = Instantiate(shot) as GameObject;
+			GameObject _shot = Instantiate(shot) as GameObject;
 			nextFire = Time.time + fireRate;
 			//GameObject clone = 
-			shot.transform.position = shotSpawn.transform.position;
-
+			_shot.transform.position = shotSpawn.transform.position;
+			audioSource.Play();
 		}
+
+
+		if (Input.GetKeyDown(KeyCode.Q)) {
+			SceneManager.LoadScene(0);
+		}
+
+
+
 	}
 	void FixedUpdate ()
 	{
+		float moveHorizontal = Input.GetAxis("Horizontal");
+		float moveVertical = Input.GetAxis("Vertical");
 
-		float moveHorizontal = Input.GetAxis ("Horizontal");
-		float moveVertical = Input.GetAxis ("Vertical");
+		Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+		rb.velocity = movement * speed;
 
-		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
-		GetComponent<Rigidbody>().velocity = movement * speed;
+		rb.position = new Vector3(
+			Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
+			0.0f,
+			Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
+		);
 
-		GetComponent<Rigidbody>().position = new Vector3
-			(
-				Mathf.Clamp (GetComponent<Rigidbody>().position.x, boundary.xMin, boundary.xMax), 0.0f, Mathf.Clamp (GetComponent<Rigidbody>().position.z, boundary.zMin, boundary.zMax)
-			);
-		GetComponent<Rigidbody>().rotation = Quaternion.Euler (0.0f, 0.0f, GetComponent<Rigidbody>().velocity.x * -tilt);
+		rb.rotation = Quaternion.Euler(
+			0.0f,
+			0.0f,
+			rb.velocity.x * -tilt
+		);
 	}
 
 }﻿

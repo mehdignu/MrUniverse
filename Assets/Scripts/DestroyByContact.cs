@@ -8,27 +8,45 @@ using System.Collections;
 
 public class DestroyByContact : MonoBehaviour
 {
-	public GameObject explosion = null; //explotion of the astroid
-	public GameObject playerExplosion = null; //when the player hits an astroid
+	public GameObject explosion;
+	public GameObject playerExplosion;
+	public int scoreValue;
 
-	//this code is first called when the collider touches the physical collider
-	void OnTriggerEnter(Collider other) 
+	private GameController gameController;
+
+	void Start()
 	{
-		if (other.tag == "Boundary")
-		{
+		GameObject gameControllerObject = GameObject.FindWithTag("GameController");
+
+		if (gameControllerObject != null) {
+			gameController = gameControllerObject.GetComponent<GameController>();
+		}
+
+		if (gameControllerObject == null) {
+			Debug.Log("Cannot find 'GameController' script");
+		}
+	}
+
+	void OnTriggerEnter(Collider other)
+	{
+		if (other.CompareTag("Boundary") || other.CompareTag("Enemy")) {
+			// Ignore Boundary
 			return;
 		}
-		Instantiate(explosion, transform.position, transform.rotation);
-		if (other.tag == "Player") // show explotions for the player
-		{
-			Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
-	
+
+		if (explosion != null) {
+			Instantiate(explosion, transform.position, transform.rotation);
 		}
 
+		if (other.CompareTag("Player")) {
+			Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
 
-		Destroy(other.gameObject);
-		Destroy(gameObject);//destroy the astroid and all it's children 3:)
+			gameController.GameOver();
+		} else {
+			gameController.AddScore(scoreValue); // Only add to the score when not hitting the Player!
+		}
 
-	
+		Destroy(other.gameObject); // Bolt or Player
+		Destroy(gameObject); // Asteroid
 	}
 }
