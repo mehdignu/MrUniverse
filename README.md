@@ -1,5 +1,5 @@
 # MrUniverse
-computer graphic course Project made with Unity 5.1 and programmed with c# to make kids learn about planets while they are playing.
+shooter game made with Unity 5.1 and programmed with c#
 
 ![Alt text](welcome.jpg?raw=true "Menu")
 ![Alt text](playMode.jpg?raw=true "play")
