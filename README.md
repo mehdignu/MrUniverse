@@ -1,4 +1,4 @@
-# MrUniverse
+# space-shooter
 shooter game made with Unity 5.1 and programmed with c#
 
 ![Alt text](welcome.jpg?raw=true "Menu")
